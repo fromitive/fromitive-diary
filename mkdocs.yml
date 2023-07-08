@@ -60,7 +60,7 @@ plugins:
    
       # GLOBAL CONFIG: configs apply to all categories
       time_format: '%Y-%m-%d %H:%M'
-      meta_time_format: '%Y-%m-%d %H:%M:%S'
+      meta_time_format: '%Y-%m-%d %H:%M'
       features:
         tags:
           index_page: tags.md
@@ -90,6 +90,11 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.mark
   - attr_list
+  - pymdownx.critic:
+      mode: view
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.keys
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
