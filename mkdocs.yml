@@ -1,15 +1,14 @@
-site_name: 백상아리의 발칙한 상상
-site_url: https://fromitive.github.io/fromitive-blog
+site_name: 일기는 일기장에
+site_url: https://fromitive.github.io/fromitive-diary
 site_author: fromitive
 site_description: >-
-  코딩, 서비스 분석, 보안 등 IT 세상 속 에서 백상아리와 같이 자유롭게 돌아다니며 경험 했던 이야기들이 넘처나는 공간
+  개인적인 이야기
 
 nav:
   - Home : index.md
-  - Coding Interview : coding-interview.md
+  - Diary : diary.md
 theme:
   name: material
-  custom_dir : override
   icon:
     logo : material/shark
   features:
@@ -52,9 +51,9 @@ plugins:
   - blogging:
       # INDIVIDUAL CATEGORIES: configs for {{ blog_content name }}
       categories:
-        - name: coding-interview
+        - name: diary
           dirs:
-            - coding-interview
+            - diary
           paging: true
           size : 3
           show_total : true
@@ -96,10 +95,5 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
 ## google analytics
-extra:
-  analytics:
-    provider: google
-    property: G-Y55B987JCP
-
 copyright: |
   &copy; 2023 <a href="https://github.com/fromitive"  target="_blank" rel="noopener">백상아리(fromitive@gmail.com)</a>
