@@ -6,6 +6,19 @@
     --md-text-font:'Nanum-RobotoReqular';
   }
 
+.md-header{
+    background-image: url('night.jpg');
+    /* Additional background properties if needed */
+    background-repeat: no-repeat;
+    background-size: cover;
+    /* Other properties as required */
+}
+.md-tabs{
+    background-color: transparent;
+}
+
+
+
 @font-face {
     font-family: 'Nanum-RobotoReqular';
     font-style: normal;

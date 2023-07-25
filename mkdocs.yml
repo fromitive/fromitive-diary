@@ -60,6 +60,13 @@ plugins:
           paging: true
           size : 3
           show_total : true
+
+        - name: idea
+          dirs:
+            - idea
+          paging: true
+          size : 3
+          show_total : true
    
       # GLOBAL CONFIG: configs apply to all categories
       time_format: '%Y-%m-%d %H:%M'
