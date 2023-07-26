@@ -7,6 +7,8 @@ site_description: >-
 nav:
   - Home : index.md
   - Diary : diary.md
+  - Idea : idea.md
+  - Tags : tags.md
 theme:
   name: material
   icon:
