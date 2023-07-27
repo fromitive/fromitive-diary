@@ -26,9 +26,11 @@
 
 ## 참고하면 좋은 블로그
  - [후디](https://hudi.blog/zero-downtime-deployment/)
+ - [kciter.so](https://kciter.so/posts/railway-oriented-programming)
  
 ## 참고하면 좋은 사이트
  - [기술 블로그 모음](https://blog.f-lab.kr/blog/sustainable-developer-growth-skills)
+ - [System Design in 2023](https://www.educative.io/blog/complete-guide-to-system-design)
 
 ## 우아한 형제 기술 블로그 
  - [신입 이력서 작성하기](https://techblog.woowahan.com/11998/)
