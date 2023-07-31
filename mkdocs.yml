@@ -48,8 +48,8 @@ plugins:
   - social:
       cards_layout_options:
         font_family: Noto Sans KR
-        background_color: "#FFF1CE"
-        color: "#0FF1CE"
+        background_color: "#0d1e38"
+        color: "#FFFFFF"
   - search:
       lang:
         - en
