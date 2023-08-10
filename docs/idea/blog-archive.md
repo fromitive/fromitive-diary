@@ -1,3 +1,13 @@
+---
+title: "테크 블로그 모음"
+description: "테크 블로그 모음집"
+time: 2023-08-10 23:13:30
+tags:
+  - blog
+  - achive
+---
+
+
 # 테크 블로그 모음
 
 <figure markdown>
@@ -23,6 +33,8 @@
 - [라인 기술블로그](https://engineering.linecorp.com/ko/culture)
 - [F-Lab 블로그](https://f-lab.kr/blog/)
 - [넥슨 테크 블로그](https://www.intelligencelabs.tech/)
+- [네이버 테크 블로그](https://blog.naver.com/connect_org)
+
 
 ## 참고하면 좋은 블로그
  - [후디](https://hudi.blog/zero-downtime-deployment/)
