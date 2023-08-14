@@ -57,5 +57,23 @@
 			"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND"
 		],
 		"description": "write current time"
+	},
+	"fromitive-diary graditude template": {
+		"prefix": "*diary*",
+		"body": [
+			"---",
+			"title: \"$CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE 감사일기\"",
+			"description: \"$1\"",
+			"time: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+			"tags:",
+			"  - diary",
+			"  - positive",
+			"---",
+			"",
+			"## 📝 하루를 되돌아보며 ",
+			"",
+			"## 🤲🏻 감사한 일",
+		],
+		"description": "graditude"
 	}
 }
