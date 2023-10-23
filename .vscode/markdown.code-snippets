@@ -83,5 +83,31 @@
 			"## 🤲🏻 감사한 일",
 		],
 		"description": "graditude"
-	}
+	},
+
+	"fromitive-diary star template": {
+		"prefix": "*star*",
+		"body": [
+			"---",
+			"title: \"$1\"",
+			"description: \"$2\"",
+			"time: $CURRENT_YEAR-$CURRENT_MONTH-$CURRENT_DATE $CURRENT_HOUR:$CURRENT_MINUTE:$CURRENT_SECOND",
+			"tags:",
+			"  - diary",
+			"  - star",
+			"---",
+			"",
+			"## 📝 이번 글에서 다룰 주제 ",
+			"",
+			"## 🚩 상황이 어떤지 자세히 적어주세요 ",
+			"",
+			"## 📝 주어진 미션이 무엇인지 명확하게 적어주세요 ",
+			"",
+			"## 🚀 어떤 행동을 수행했는지 적어주세요 ",
+			"",
+			"## 📈 이를 통해 어떤 결과를 얻게 되었나요? ",
+			"",
+		],
+		"description": "star template"
+	},
 }
