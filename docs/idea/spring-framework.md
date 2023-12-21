@@ -83,3 +83,17 @@ java Bean vs Spring Bean
 Spring이 객체를 자동을 생성하게 하는 방법?
 
 POJO(Plain Old Java Object) - 일바 자바 객체?
+
+스프링에서 자동으로 객체를 생성하고 관리하는 방법
+
+@Component Annotation 사용
+
+Dependency Injection
+
+만일, 관리하는 객체에 의존하는 다른 객체가 있을 경우 자동으로 Dependency Injection이 일어날 수 있다.
+
+스프링에서 사용하는 Dependency Injection은 아래와 같다.
+
+1. Constructor Injection (자동)
+2. Setter based injection
+3. field based injection
