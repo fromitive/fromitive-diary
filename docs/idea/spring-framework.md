@@ -86,7 +86,9 @@ POJO(Plain Old Java Object) - 일바 자바 객체?
 
 스프링에서 자동으로 객체를 생성하고 관리하는 방법
 
-@Component Annotation 사용
+1. 사용할 Bean - @Component Annotation 사용
+2. Application Context 안에서 @ComponentScan 사용
+  - @ComponentScan("패키지명")으로 지정도 가능!
 
 Dependency Injection
 
