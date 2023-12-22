@@ -99,3 +99,62 @@ Dependency Injection
 1. Constructor Injection (자동)
 2. Setter based injection
 3. field based injection
+
+Constructure를 제외한 Setter based, Field based는 @AutoWired Annotation을 추가해준다.
+
+Inversion of Control ->
+main코드에서 프로그래머가 객체를 관리하는 것이 아닌
+@Component, @Comfiguration 그리고, @Component 객체의 의존을 Auto-wire를 한 스프링이 객체의 관리를 담당하게 된다. 이를 Inversion of Control이라고 한다.
+
+
+@Lazy Initialization
+사용자가 @Lazy를 붙인 객체를 사용할 때, 초기화 되는 Bean을 생성한다.
+- 마치 python interpreter와 같이 필요할 때 호출되는 느낌이다.
+- 오류가 뒤늦게 발견되기도 한다.
+
+@Eager Initializtion(default)
+
+@Component와 @Bean Annotation에 기본으로 설정된 초기화 방식
+ - 초기 오류를 즉시 잡아주어 대부분 권장한다.
+
+Bean의 Scope
+관리하는 Bean은 기본적으로 1개만 초기화된다.(single-ton)
+ - Spring Singleton : IoC Container는 한 개의 Object Instance만 갖는다.
+
+여러개의 객체의 상태값을 관리하기 위해서는 @Scope를 사용할 수 있다. -> 부를때 마다 메모리를 할당한다.
+
+@Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+
+Prototype은 언제 사용하나? -> 상태를 관리할 때 사용
+
+PostConstruct와 PreDestroy Annotation 
+
+Jakarta CDI --> Context and Dependency Injection Specification
+
+스테리오 스프링 어노테이션 
+@Component: Generic Spring Annotation for Bean creation
+
+@Service
+@Controller
+@Repository
+
+---
+
+@ComponentScan -> Component를 스캔한다.
+@Compnent
+
+@Primary
+@Qualifier
+
+@Autowired
+
+@Lazy
+
+@Postconstruct
+@PreDestroy
+
+@Scope
+
+Jakarta Annotation
+@Named = @Component
+@Inject = @Autowired
