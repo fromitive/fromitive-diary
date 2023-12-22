@@ -7,154 +7,154 @@ tags:
   - spring-framework
 ---
 
-Create Object
+## 스프링
 
-Wireing Dependency
+웹 어플리케이션을 쉽게 만들어 주게 하는 프로젝트이다.  
 
-What is Wiring Dependency
+## 특징 
 
-GameRunner -> GameConsole
+### 낮은 결합도
+사랑받는 이유는 Loose-coupling 특성이 존재하기 때문이다.
+Java Enterprise Edition(Jakarta EE)가 웹 어플리케이션을 만들기 위해서는 사전 작업이 많이 필요했지만, 스프링은 기존에 만들어놓았던 인터페이스 객체를 그대로 사용할 수 있기 때문에 사용자들에게 많이 사랑받는다.
 
-게임 러너는 게임 콘솔이 있어야 동작이 된다. --> Dependency
+또한, 스프링에 의존하는 것이 아니라 자신의 비즈니스 로직에 집중하도록 도와주는 역할을 한다.
 
+### Inversion-of-Control 컨테이너
 
-wiring??
+스프링은 개발자가 만든 객체를 IoC 컨테이너를 통해 관리된다. 관리 단위를 Bean이라고 하는데 Bean으로 할 수 있는 행위는 다음과 같다.
 
-Spring framework의 역할
+객체에 접근하거나(getBeans)
+스프링이 관리해야 할 객체들을 등록(@Component) 
+객체를 생성하기 위해 필요한 객체를 자동으로 생성(@Autowired)하거나 
+객체가 생성되거나 사라질때(@PreDestroy, @PostConstruct)처리 방식
 
-객체의 상호간의 의존성을 관리해준다?? bean을 통해?
-ConfigurationContext 안에서 Bean을 정의할 수 있고
+## 프로젝트 종류
 
-ConfigurationContext 객체 생성
-AnnotationConfigApplicationContext([Configuration Annotaion 클래스])
-Bean은 Spring framework가 관리할 대상으로 인식한다고한다.
+### Spring Webflux
 
-어떤 "관리"를 제공해주는데? 
+비동기 웹 어플리케이션을 만들 때 사용한다.
 
-- Auto-Wired
-    @Bean
-    public Person autoWiredPerson(String name, int age) {
-        //관리하는 Bean내에 name과 age를 연결시켜 자동으로 집어 넣는 역할을 한다. 
-        //이것을 Auto-Wired라고 한다.
-        return new Person(name, age);
-    }
+### Spring MVC
 
-- 관리하는 객체 조회
-getBeanDefinition
-getBeanDefinitionCount
-- 중복하고 있는 객체를 관리
-  : 스프링은 Type을 중복으로 쓰는 Bean이 있을때, getBeans를 사용하면 예외를 발생시킨다.
-   : auto-wiring 을 쓸 때도 없는 Bean 이름을 쓰면 후보군을 찾게되는데 후보가 여러개일 때 예외를 발생시킨다.
-  : 이를 해결하기 위해 Primary를 설정한다.
-    - 설정하는 방법 @Bean에 @Primary Annotation 추가
+일반 웹 어플리케이션 만들 때 사용한다.
 
-   : 다른 해결방법으로 Quailfier를 사용하는 것이다.
-    - Qualifier는 후보군을 지정하여 기본 값을 설정할 수 있는 장점이 있다.
+### Spring Boot
 
+유연한 Spring WebApplication을 만들때 사용한다. 제일 많이 사랑받는 프로젝트이다.
 
+### Spring Security
 
-Spring Context를 생성한 후 객체를 관리하는 방법
-//1: Launch Spring context
-//2: Configure the things that we want Spring to manage - @Configuration 을 통해
+보안에 관련된 모듈이다.
 
-Bean 생성하는 방법
+### Spring DataBase
 
+Spring에서 DataBase 접근을 위해 필요한 프로젝트이다.
 
-관리하고 있는 Bean 객체를 반환하는 방법
-context.getBean("Bean 객체 이름"); 또는
-context.getBean([Bean으로 설정한 클래스])
+## 기본 사용법
 
+### 1. IoC Container 생성
 
-Spring Container
-Spring 빈과 life-cycle을 관리하는 주체 
--> 만드는 법
-@Configuration
+IoC Container 를 생성한다. 이 컨테이너가 Spring에서 사용할 Bean을 관리하며 종류는 BeanFactory, ApplicationContext 가 있다. ApplicationContext가 좀 더 기능이 많고, 편하게 관리할 수 있는 이점이 있다고 한다.
+
+다음은 ApplicationContext를 생성하는 방법이다. AnnotationConfigApplicationContext로 ApplicationContext를 만들 수 있고 getBean() 등으로 Bean으로 등록된 객체에 접근이 가능하다.
+
+``` java
+try(var context = AnnotationConfigApplicationContext([ConfigurationAnnotion 클래스].class)){
+	// context로 Bean객체 제어
+	context.getBean(SomeBeanClass.class)
+}
+```
+
+### 2. Configuration 등록
+
+AnnotationConfigApplicationContext를 사용하기 위해서는 Configuration Annotation이 붙여진 객체를 써야 한다.
+안써도 Spring측에서 자동으로 붙여줘서 관리 받을 수 있다.
+
+``` java
+@Configuration // 안 써도 그만!
+class SomeConfiguration {
+
+}
+```
+
+#### @ComponentScan
+
+스프링이 컨텍스트를 사용하기 위해 검색할 수 있게 제공하는 Annotation이다. 아무것도 안써있으면 현재 패키지 기준으로 @Component Annotation이 붙여진 객체를 Bean(IoC컨테이너가 관리하는 객체)으로 만든다.
+
+특정 패키지를 검색하기 위해서는 @ComponentScan(`패키지 명`)을 작성하면 사용 가능하다.
+
+### 3. Bean 등록
+
+스프링이 관리할 객체인 Bean을 만드는 방법은 @Bean 을 쓰거나, @Component를 사용하여 관리한다. 
+
 @Bean
---> AnnotationConfigApplicationContext
--> 동일 단어
-동일 언어
-Spring Context
-Application Context --> 관점 지향 프로그래밍, 웹 프로그래밍, 국제화 등 지원한다.
-			(Spring Container 중 한개)
-IOC(Inversion of Control: 제어의 역전) Container
+SomeBean getBean(){
+	return someBean;
+}
+
+@Bean은 사용자가 관리하기 힘든 리소스를 설정할 때 사용한다고 한다. 
+
+@Component
+class SomeComponent {
+}
+
+보통 사용자들이 사용하기 위해 Component를 사용한다고 한다. 하지만, 좀 더 다른 팀원들이 이해하기 쉽도록 스테리오 타입 이 존재한다고 한다(스테리오 = 규칙이 있는 타입)
+
+#### 스테리오 타입 종류
+
+@Repository, @Service, @Controller
+
+## Inversion-of-Control
+
+### 의존성
+
+하나의 객체 A를 동작시킬 때 필요한 객체들(B,C,D)이 있을 때, A는 BCD와 의존한다라고 말한다. 
+
+#### 의존성 주입
+
+A를 생성할 때, 외부의 객체 B,C,D를 인자로 받아 초기화 하는 과정(?)을 말한다 (잘 모르겠다) 
+
+### Auto-Wired
+
+Bean에 의존하는 Bean이 있을때, 해당 Bean을 자동으로 생성하여 붙여(Auto-Wired)주는 작업이다. 즉, A를 초기화 할때 B,C,D를 자동으로 생성하여 붙여준다.
+
+### 의존성 주입 종류
+
+1. Constructor-based DI (Spring에서 기본적으로 처리됨)
+2. Setter-based DI (@Autowired 필요)
+3. field-based DI (@Autowired 필요)
+
+### 생성 시점 변경
+Spring의 Beans는 생성 시점 제어가 가능하다.
+
+#### Eager
+
+#### Lazy
+@Lazy Annotiation을 붙이면 사용자가 필요할 때 초기화 된다고 한다.
+
+### Bean Scope
+
+Bean의 기본 생성 범위는 Single-ton 이라고 한다. 즉, 한 IoC Container 한 종류의 Bean이 초기화 된다.
+
+이를 변경할 수 있는데 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)으로 설정하면 사용할 때 마다. 같은 종류의 Bean을 생성한다.
+
+클라이언트 별로 상태를 관리할 때 사용한다고 한다. 
 
 
-java Bean vs Spring Bean
-Spring이 객체를 자동을 생성하게 하는 방법?
+### 소멸, 생성시 제어
 
-POJO(Plain Old Java Object) - 일바 자바 객체?
+#### PostConstruct
+생성자가 호출된 이후 실행하는 코드를 지정한다. DB 초기 설정을 할때 사용한다고 한다.
 
-스프링에서 자동으로 객체를 생성하고 관리하는 방법
+#### PreDestruct
+객체가 소멸될 때 실행하는 코드를 지정한다. 자원을 깔끔하게 지울 때 사용한다고 한다.
 
-1. 사용할 Bean - @Component Annotation 사용
-2. Application Context 안에서 @ComponentScan 사용
-  - @ComponentScan("패키지명")으로 지정도 가능!
+### 중복되는 Bean이 있을경우 우선권 설정
 
-Dependency Injection
+#### Quailfier
 
-만일, 관리하는 객체에 의존하는 다른 객체가 있을 경우 자동으로 Dependency Injection이 일어날 수 있다.
+#### Priamry
 
-스프링에서 사용하는 Dependency Injection은 아래와 같다.
+### Jakarta CDI
 
-1. Constructor Injection (자동)
-2. Setter based injection
-3. field based injection
-
-Constructure를 제외한 Setter based, Field based는 @AutoWired Annotation을 추가해준다.
-
-Inversion of Control ->
-main코드에서 프로그래머가 객체를 관리하는 것이 아닌
-@Component, @Comfiguration 그리고, @Component 객체의 의존을 Auto-wire를 한 스프링이 객체의 관리를 담당하게 된다. 이를 Inversion of Control이라고 한다.
-
-
-@Lazy Initialization
-사용자가 @Lazy를 붙인 객체를 사용할 때, 초기화 되는 Bean을 생성한다.
-- 마치 python interpreter와 같이 필요할 때 호출되는 느낌이다.
-- 오류가 뒤늦게 발견되기도 한다.
-
-@Eager Initializtion(default)
-
-@Component와 @Bean Annotation에 기본으로 설정된 초기화 방식
- - 초기 오류를 즉시 잡아주어 대부분 권장한다.
-
-Bean의 Scope
-관리하는 Bean은 기본적으로 1개만 초기화된다.(single-ton)
- - Spring Singleton : IoC Container는 한 개의 Object Instance만 갖는다.
-
-여러개의 객체의 상태값을 관리하기 위해서는 @Scope를 사용할 수 있다. -> 부를때 마다 메모리를 할당한다.
-
-@Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-
-Prototype은 언제 사용하나? -> 상태를 관리할 때 사용
-
-PostConstruct와 PreDestroy Annotation 
-
-Jakarta CDI --> Context and Dependency Injection Specification
-
-스테리오 스프링 어노테이션 
-@Component: Generic Spring Annotation for Bean creation
-
-@Service
-@Controller
-@Repository
-
----
-
-@ComponentScan -> Component를 스캔한다.
-@Compnent
-
-@Primary
-@Qualifier
-
-@Autowired
-
-@Lazy
-
-@Postconstruct
-@PreDestroy
-
-@Scope
-
-Jakarta Annotation
-@Named = @Component
-@Inject = @Autowired
+Spring이 사용하는 Component나, AutoWire의 Interface이고, Spring Annotion이 Jakarta CDI의 구현체(implement)라고 한다.
