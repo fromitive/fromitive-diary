@@ -163,3 +163,65 @@ Bean의 기본 생성 범위는 Single-ton 이라고 한다. 즉, 한 IoC Contai
 ### Jakarta CDI
 
 Spring이 사용하는 Component나, AutoWire의 Interface이고, Spring Annotion이 Jakarta CDI의 구현체(implement)라고 한다.
+
+
+## Spring-Boot
+
+사전 의존성으로는 `spring-boot-starter-web` 이 있다.
+
+`spring-boot-devtools`를 이용하여 코드 수정 시 빠르게 spring을 재시작 할 수 있는 도구로 사용할 수 있다.
+
+`spring-boot-starter-jpa`를 이용하여 DB와 연동 할 수 있다. `@Entity`로 지정된 Bean을 바탕으로 테이블을 만들고, 수정, 삭제, 생성, 변경을 하는 것 같다. -> @Entity 객체는 매개변수가 없는 객체를 사전에 정의해야 한다고 한다. 
+
+모니터링 툴로서 `spring-boot-starter-actuator`가 있다. 제공하는 REST-API 및 몇 번 요청했는지 나와있다.
+
+### MySQL 연동
+
+MySQL 연동할 때 오류가 있었어서 기록하고자 한다. MySQL를 연동하기 위해서는 아래의 사전 작업이 필요하다
+
+```
+1. dependency 등록
+com.mysql:mysql-connector-j:8.0.33 // 원래는 mysql-connector-java 였지만, maven측에서 connector-j로 옮겨갔다.
+
+2. application.properties 설정
+
+spring.jpa.defer-datasource-initialization=true # ?? 무슨 역할을 하는지 모르겠다. 추가 조사가 필요하다
+spring.jpa.hibernate.ddl-auto=update # 테이블을 자동으로 생성가능하게 하는것 같다?
+spring.datasource.url=jdbc:mysql://localhost:3306/courses # 등록한 database 주소
+spring.datasource.username=courses-user # 아이디
+spring.datasource.password=dummycourses # 비밀번호
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+# MySQL57Dialect가 안먹힌다. 지원하는 dialect는 https://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/dialect/package-summary.html 에서 찾아볼 수 있다. 
+```
+위와 같이 연동 시 바로 jpa 및 mysql를 사용할 수 있게 된다.
+
+RESTAPI - HTTP 메소드를 이용하여 웹 어플리케이션의 기능을 수행하는 API라고 생각되어진다. 각 HTTP메소드(GET,POST,PUT,DELETE,PATCH 등등) 별로 지원하는 API를 정의한 후에 프론트엔드와 연동하여 사용하는 듯 하다.
+
+아래는 RestController를 만드는 방법이다.
+``` java
+@RestController
+class CoursesController {
+	@AutoWired
+	CoursesRepository coursesRepository;
+
+	@GetMapping("/courses")
+	public List<Courses> getAllCourses(){
+		return courseRepository.findAll();
+	}
+
+	@GetMapping("/courses/{id}")
+    public Courses getCoursesDetail(@PathVariable long id) {
+        return courcesRepository
+                .findById(id)
+                .orElseThrow(() -> new NoSuchElementException("course not found by id :" + id));
+    }
+
+    @PostMapping("/courses")
+    public void createCourse(@RequestBody Courses untrustCourses) {
+        courcesRepository.save(untrustCourses);
+    }
+}
+```
+
+주의해야 할 건, 레포지토리의 `save()` 메소드인데, id 값을 지정하여 save를 할 경우 덮어씌어진다. 따라서, 사용자 입력값은 신뢰할 수 없도록 해야 한다고 생각한다. 다른 Github Repository를 참조한 결과 Response를 바로 Domain을 통해 저장하는 것 보다, 별도의 DTO를 만들어서 관리하는 모습을 보인다. (id 자체가 없도록 관리)
+
