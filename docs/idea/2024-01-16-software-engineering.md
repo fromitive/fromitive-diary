@@ -78,7 +78,7 @@ interface RatePolicy {
 }
 ```
 
-call의 시간대별로 요금 정책을 부가하기 위해 `BaseRatePolicy`를 만든다. 만든 내용은 아래와 같다.
+call의 시간대별로 요금 정책을 부과하기 위해 `BaseRatePolicy`를 만든다. 만든 내용은 아래와 같다.
 
 
 ``` java title="BasicRatePolicy.java"
@@ -129,7 +129,7 @@ public class FixedFeePolicy extends BasicRatePolicy {
 
 public class TimeOfDayDiscountPolicy extends BasicRatePolicy {
     // starts , ends , durations , amounts
-    // 시작(시:분), 종료(시:분), 부가단위(초), 부가금액(원)
+    // 시작(시:분), 종료(시:분), 부과단위(초), 부과금액(원)
 
     private List<LocalTime> starts = new ArrayList<>();
     private List<LocalTime> ends = new ArrayList<>();
@@ -295,4 +295,92 @@ BaseRatePolicy까지 구현했을 땐, 일관성이 있고 좋았다. 문제는 
 
 ## 일관성 없는 구현
 
+처음부터 일관성을 유지하기란 어렵다고 생각한다.
+
+맨 처음 BaseRatePolicy가 나온 배경에도 평일 요금, 주말 요금, 시간대 별 요금이 생기다가 세금 부과, 할인 적용까지 요구사항을 만족하다가 리펙터링하여 얻은 결실이다. 
+
+이와 마찬가지로, 일관적으로 설계를 유지하기 위해선 이렇게 데이터가 충분히 쌓이고 나서 변화하는 패턴을 찾은 후 이를 캡슐화 하는 편이 생산성 측면에서 유리할 것으로 분석된다.
+
 ## 일관성을 부여하려면? 변하는 것을 찾아라
+
+요금 정책의 변화하는 부분이란 요구사항에 나와있는 내용처럼 `고정`, `시간대별`, `요일별`, `구간별`일 것이다.
+
+이렇게 변화하는 것을 찾았으면 이를 **캡슐화 해야 한다**.
+
+책에서는 아래와 같이 요금 정책 표를 제시하여 변화하는 것과 변화하지 않는 것을 제시했다.
+
+| 변화하는 것 | 정책 조건           | 부과 요금 | 요금 부과를 위한 협력객체     |
+| ----------- | ------------------- | --------- | ---------------- |
+| 고정        | (없음)              | A초당 B원 | DateTimeInterval         |
+| 시간대별    | A시 부터 ~ B시 까지 | A초당 B원 | DateTimeInterval |
+| 요일별      | A,B요일             | A초당 B원 | DateTimeInterval |
+| 구간별      | A초부터 B초까지     | A초당 B원 | DateTimeInterval |
+
+변화하지 않는 부분은 `정책 조건`, `부과 요금`, `요금 부과를 위한 협력객체`이다.
+
+또한 `정책 조건`은 대부분 DateTimeInterval에서 계산이 가능하므로 Call안에 조건이 맞는 DateTimeInterval을 반환하여 `부과 요금` 및 `요금 부과를 위한 협력객체`와 협력할 수 있을 것이다.
+
+따라서 `부과 요금`은 요금 부과를 위한 협력객체와 응집도가 높도록 코드를 짜준다면 아래와 같이 나타나게 된다.
+
+``` java title="FeeDuration.java"
+class FeeDuration {
+    private Duration duration; // A초당
+    private Money fee; // B원
+
+    // DateTimeInterval과 협력
+    public Money calculate(DateTimeInterval interval){
+        return fee.times(interval.duartion().getSeconds() / durations);
+    }
+}
+```
+
+정책 조건은 부과 요금과 요금 부과를 위한 협력 객체를 반환하기 위한 DateTimeInterval을 반환한다.
+
+``` java title="FeeCondition.java"
+interface FeeCondition {
+    List<DateTimeInterval> findAllSatisfiedIntervals(Call call);
+}
+```
+
+하나의 정책은 여러 조건이 있을 수 있고, 정책과  Policy의 하위 단위인 Rule을 만든다.
+
+``` java title="FeeRule.java"
+class FeeRule {
+    FeeCondition condition;
+    FeeDuration duration;
+
+    public Money calculate(Call call){ 
+        condition.findAllSatisfiedIntervals(call)
+                .stream()
+                .map(interval -> calculate(interval))
+                .reduce(Money.ZERO, (first, second) -> first.plus(second));
+    }
+}
+```
+
+마지막으로 BaseRatePolicy를 변경한다. 차이점은 calcualteCallFee가 FeeRule들의 조합으로 구체화 되었다는 점이다.
+
+``` java title="BaseRatePolicy.java"
+public class BasicRatePolicy implements RatePolicy {
+    List<FeeRule> rules;
+
+    @Override
+    public Money calculateFee(Phone phone) {
+        return phone.getCalls().stream()
+                .map(each -> calculateCallFee(each))
+                .reduce(Money.ZERO, (first, second) -> first.plus(second));
+    }
+
+    private Money calculateCallFee(Call call) {
+        return rules.stream()
+                .map(rule -> rule.calculate(call))
+                .reduce(Money.ZERO, (first, second) -> first.plus(second));
+    }
+}
+```
+
+어떤가? 이전에 비해 클래스가 작아졌고 뇌에 과부화가 걸리지 않는다. 코드도 FeeRule과 FeeCondition FeeDuration 클래스로 나뉘었더니, 좀 더 일관적으로 코드를 짤 수 있게 되었다.
+
+지금 형태로 코드를 짜는 것만이 100% 정답은 아니다. 중요한 건, 개발자가 코드를 이해하기 위한 시간을 줄이기 위해서 어떻게 도움을 줄 수 있을지에 대한 고찰이라고 생각한다.
+
+그리고 이번 글에서 중요한 점은 변화하지 않는 것은 다양한 **요금 부과 조건을 고민**하면서 만들었다는 것이다. 요구 사항이 주어졌을 때**평소에 어떤 고민을 많이 하는지 그 고민을 추상화하면 어떻게 나오는지 생각하는 것**이  시간을 단축시키고 일관되고 유연한 코드를 작성하는 길이라는 것을 알게되었다.
